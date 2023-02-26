@@ -4,11 +4,18 @@ import EmployeeService from "../services/EmployeeService";
 import { RouteProps } from "react-router-dom";
 
 interface Employee {
-  id: number;
+  id: any;
   firstName: string;
-  lastName: string;
   middleName: string;
+  lastName: string;
   emailId: string;
+  contactNumber: string;
+  address: string;
+  contractType: string;
+  startDate: string;
+  finishDate: string;
+  workTimeType: string;
+  hoursPerWeek: string;
 }
 
 const EmployeeList: React.FC<RouteProps> = () => {
@@ -19,6 +26,12 @@ const EmployeeList: React.FC<RouteProps> = () => {
       setEmployees(res.data);
     });
   }, []);
+
+  const handleDelete = (id: any) => {
+    EmployeeService.deleteEmployee(id).then(() => {
+      setEmployees((prevEmployees) => prevEmployees.filter((e) => e.id !== id));
+    });
+  };
 
   return (
     <div>
@@ -42,15 +55,18 @@ const EmployeeList: React.FC<RouteProps> = () => {
             </tr>
           </thead>
           <tbody>
-            {employees.map((employee) => (
-              <tr key={employee.id}>
+            {employees.map((employee, index) => (
+              <tr>
+                <th key={index}>{index + 1} </th>
                 <td>{employee.firstName}</td>
                 <td>{employee.middleName}</td>
                 <td>{employee.lastName}</td>
                 <td>{employee.emailId}</td>
                 <td>
                   <button>Edit</button>
-                  <button>Remove</button>
+                  <button onClick={() => handleDelete(employee.id)}>
+                    Remove
+                  </button>
                 </td>
               </tr>
             ))}

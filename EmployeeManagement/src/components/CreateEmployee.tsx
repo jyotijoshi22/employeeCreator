@@ -1,46 +1,54 @@
 import axios from "axios";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+interface Employee {
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  emailId: string;
+  contactNumber: string;
+  address: string;
+  contractType: string;
+
+  startDate: string;
+  finishDate: string;
+  workTimeType: string;
+  hoursPerWeek: string;
+}
 
 const CreateEmployee = () => {
-  //const { id } = useParams();
-  const [employee, setNewEmployee] = useState({
+  const [employee, setNewEmployee] = useState<Employee>({
     firstName: "",
     middleName: "",
     lastName: "",
     emailId: "",
     contactNumber: "",
     address: "",
-    status: "",
+    contractType: "",
+    startDate: "",
+    finishDate: "",
+    workTimeType: "",
+    hoursPerWeek: "",
   });
+  let navigate = useNavigate();
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
-    setNewEmployee({ ...employee, [e.target.name]: e.target.value });
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    console.log(name, value);
+
+    setNewEmployee((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
-  // Handle updating the latest details to currentEmployee
-  const formatObj = () => {
-    const finalObj = {
-      ...employee,
-
-      middleName: employee.middleName?.length == 0 ? null : employee.middleName,
-    };
-
-    return finalObj;
-  };
-  const handleSubmit = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    const finalObj = formatObj();
-    axios.post("/employee", finalObj).then(() => {
-      return setNewEmployee({
-        firstName: "",
-        middleName: "",
-        lastName: "",
-        emailId: "",
-        contactNumber: "",
-        address: "",
-        status: "",
-      });
+  const handleSubmit = (e: any) => {
+    e.preventDefault(); // prevent the default form submission behavior
+    console.log(employee);
+    axios.post("http://127.0.0.1:5173/employee/create", employee).then(() => {
+      navigate("/employee");
+      console.log(employee);
     });
   };
 
@@ -138,11 +146,31 @@ const CreateEmployee = () => {
                 />
               </div>
 
+              <h2>Employee status</h2>
+              <p>What is contract type?</p>
+              <div>
+                <input
+                  type="radio"
+                  name="contractType"
+                  value={employee.contractType}
+                  onChange={handleChange}
+                />
+                <label>Permanent</label>
+              </div>
+
+              <div>
+                <input
+                  type="radio"
+                  name="contractType"
+                  value={employee.contractType}
+                  onChange={handleChange}
+                />
+                <label>Contract</label>
+              </div>
+
               <div className="form-group">
                 <input type="submit" className="btn btn-primary" />
               </div>
-
-              {/* to do  employee status contract or permanent */}
             </form>
           </div>
         </div>
